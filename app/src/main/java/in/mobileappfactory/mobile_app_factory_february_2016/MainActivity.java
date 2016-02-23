@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button get_button;
@@ -55,10 +57,25 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ArrayList<ArrayList<String>> al = new ArrayList<ArrayList<String>>();
             al=get_avail_contacts();
-//            String []dsf = new String[al.size()];
-//            al.toArray(dsf);
-            System.out.println("" + al);
+            List<String> name = new ArrayList<String>();
+           for(int i=0;i<al.size();i++){
+               for(int j=0;j<al.get(i).size();j++){
 
+                   if(j==0){
+                       // if J is zero to get all the name list
+                       name.add(al.get(i).get(j));
+                   }
+               }
+           }
+
+            System.out.println(name);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, name);
+
+
+            // Assign adapter to ListView
+            ls.setAdapter(adapter);
         }
     }
 
@@ -74,12 +91,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-//    private void displayContacts() {
-//        get_avail_contacts();
-//
-//    }
 
     public ArrayList<ArrayList<String>> get_avail_contacts() {
         ArrayList<ArrayList<String>> nodes = new ArrayList<ArrayList<String>>();
@@ -119,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
                }
             }
             cur.close();
-//            System.out.println("" + nodes);
         }
         return nodes;
     }
