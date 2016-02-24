@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Get_Contact_list/Get_Contact_list.iml" filepath="$PROJECT_DIR$/Get_Contact_list/Get_Contact_list.iml" />
       <module fileurl="file://$PROJECT_DIR$/Mobile_app_factory_february_2016.iml" filepath="$PROJECT_DIR$/Mobile_app_factory_february_2016.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/save_contact_in_db/save_contact_in_db.iml" filepath="$PROJECT_DIR$/save_contact_in_db/save_contact_in_db.iml" />
     </modules>
   </component>
 </project>
