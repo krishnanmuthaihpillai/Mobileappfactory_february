@@ -11,7 +11,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Get_Contact_list" />
-            <option value="$PROJECT_DIR$/save_contact_in_db" />
+            <option value="$PROJECT_DIR$/Save_contact_in_db" />
+            <option value="$PROJECT_DIR$/change_optionmenu_fragment" />
           </set>
         </option>
       </GradleProjectSettings>

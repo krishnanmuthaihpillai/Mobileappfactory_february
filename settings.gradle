@@ -1,1 +1,1 @@
-include ':Get_Contact_list', ':save_contact_in_db'
+include ':Get_Contact_list', ':Save_contact_in_db', ':change_optionmenu_fragment'
