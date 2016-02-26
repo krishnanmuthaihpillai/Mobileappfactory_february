@@ -2,12 +2,14 @@ package in.mobileappfactory.mobile_app_factory_february_2016;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,8 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    Button get_button;
-    TextView tv;
+//    Button get_button;
+//    TextView tv;
     ListView ls;
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
@@ -31,52 +33,51 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-//        String[] contact_array = get_avail_contacts();
     }
 
     private void init() {
-        get_button = (Button) findViewById(R.id.get_button);
-        tv = (TextView) findViewById(R.id.textView);
         ls = (ListView) findViewById(R.id.listView);
-        get_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "dddddddd", Toast.LENGTH_LONG).show();
-                showContacts();
-            }
-
-
-        });
+        showContacts(getApplicationContext());
     }
 
-    private void showContacts() {
+    private void showContacts(Context context) {
+        DatabaseHandler db = new DatabaseHandler(context);
+        db.deleteAll();
         // Check the SDK version and whether the permission is already granted or not.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
             //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
         } else {
-            ArrayList<ArrayList<String>> al = new ArrayList<ArrayList<String>>();
-            al=get_avail_contacts();
-            List<String> name = new ArrayList<String>();
-           for(int i=0;i<al.size();i++){
-               for(int j=0;j<al.get(i).size();j++){
-
-                   if(j==0){
-                       // if J is zero to get all the name list
-                       name.add(al.get(i).get(j));
+            ArrayList<ArrayList<String>> my_array_list = new ArrayList<ArrayList<String>>();
+            my_array_list=get_avail_contacts();
+            String d_name = null;
+            String d_number = null;
+           for(int i=0;i<my_array_list.size();i++){
+                   d_name=my_array_list.get(i).get(0);
+                   for(int j=1;j<my_array_list.get(i).size();j++) {
+                       if(j>1){
+                           d_number+=","+my_array_list.get(i).get(j);
+                       }else{
+                           d_number=my_array_list.get(i).get(j);
+                       }
                    }
-               }
+               store_in_DB(db, d_name, d_number);
            }
-
-            System.out.println(name);
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, name);
-
-
+            // Reading all contacts
+            List<Contact> contacts = db.getAllContacts();
+            ArrayList<String> ar = new ArrayList<String>();
+            for (Contact cn : contacts) {
+                String log = cn.getName() + "\n" + cn.getPhoneNumber();
+                ar.add(log);
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, ar);
             // Assign adapter to ListView
             ls.setAdapter(adapter);
         }
+    }
+
+    private void store_in_DB(DatabaseHandler db, String name, String number) {
+        db.addContact(new Contact(name, number));
     }
 
     @Override
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
-                showContacts();
+                showContacts(getApplicationContext());
             } else {
                 Toast.makeText(this, "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
             }
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 //finally add combined array list with main array list
                if(!comb_ary_list.isEmpty()){
                    nodes.add(comb_ary_list);
+
                }
             }
             cur.close();
